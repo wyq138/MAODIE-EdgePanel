@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+node_modules/
+build/
+dist/
+publish/
+release/
+AppPackages/
+*.user
+*.suo

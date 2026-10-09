@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="EdgePanel.Pages.OverviewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="14" Spacing="12">
+
+            <StackPanel Margin="4,4,4,0">
+                <TextBlock x:Name="ClockText" FontSize="42" FontWeight="SemiBold" Text="00:00" />
+                <TextBlock x:Name="DateText" Opacity="0.7" Text="" />
+            </StackPanel>
+
+            <Border Style="{StaticResource Card}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        x:Name="WeatherGlyph"
+                        Margin="2,0,14,0"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe UI Emoji"
+                        FontSize="30"
+                        Text="&#x2600;&#xFE0F;" />
+                    <StackPanel Grid.Column="1">
+                        <TextBlock x:Name="WeatherTemp" Style="{StaticResource MetricValue}" Text="--°C" />
+                        <TextBlock x:Name="WeatherDesc" Style="{StaticResource MetricLabel}" Text="尚未获取天气" />
+                    </StackPanel>
+                    <Button
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Click="RefreshWeather_Click">
+                        <FontIcon FontSize="14" Glyph="&#xE72C;" />
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="系统资源" Style="{StaticResource SectionTitle}" />
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock x:Name="CpuText" Style="{StaticResource MetricValue}" Text="0%" />
+                            <TextBlock Style="{StaticResource MetricLabel}" Text="CPU" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock x:Name="MemText" Style="{StaticResource MetricValue}" Text="0G" />
+                            <TextBlock Style="{StaticResource MetricLabel}" Text="内存" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock x:Name="NetText" Style="{StaticResource MetricValue}" Text="0K" />
+                            <TextBlock Style="{StaticResource MetricLabel}" Text="下载 KB/s" />
+                        </StackPanel>
+                    </Grid>
+                    <ProgressBar x:Name="CpuBar" Maximum="100" />
+                    <ProgressBar x:Name="MemBar" Maximum="100" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="快捷操作" Style="{StaticResource SectionTitle}" />
+            <Grid ColumnSpacing="8" RowSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Button
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    Click="Lock_Click"
+                    Content="锁屏" />
+                <Button
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Click="Mute_Click"
+                    Content="静音切换" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    Click="TaskMgr_Click"
+                    Content="任务管理器" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Click="Recycle_Click"
+                    Content="清空回收站" />
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    Click="ResMon_Click"
+                    Content="资源监视器" />
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Click="Control_Click"
+                    Content="控制面板" />
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

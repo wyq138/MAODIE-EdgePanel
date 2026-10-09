@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="EdgePanel.PanelWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:EdgePanel.Controls"
+    Title="MAODIE EdgePanel">
+
+    <Grid
+        x:Name="Root"
+        Background="Transparent"
+        PointerEntered="Root_PointerEntered"
+        PointerPressed="Root_PointerPressed"
+        PointerExited="Root_PointerExited"
+        PointerMoved="Root_PointerMoved"
+        PointerReleased="Root_PointerReleased"
+        PointerCaptureLost="Root_PointerCaptureLost">
+
+        <!--  收起态：贴边细小白条，点击展开  -->
+        <Grid
+            x:Name="CollapsedStrip"
+            Opacity="0"
+            RenderTransformOrigin="0,0.5"
+            Visibility="Collapsed">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="StripScale" />
+            </Grid.RenderTransform>
+            <Border
+                x:Name="StripBorder"
+                Width="10"
+                Height="132"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Background="#F2FFFFFF"
+                BorderBrush="#33FFFFFF"
+                BorderThickness="1"
+                CornerRadius="5"
+                ToolTipService.ToolTip="点击展开 EdgePanel">
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="7">
+                    <Rectangle
+                        Width="2.5"
+                        Height="22"
+                        RadiusX="1.25"
+                        RadiusY="1.25"
+                        Fill="#59000000" />
+                    <Rectangle
+                        Width="2.5"
+                        Height="22"
+                        RadiusX="1.25"
+                        RadiusY="1.25"
+                        Fill="#3D000000" />
+                    <Rectangle
+                        Width="2.5"
+                        Height="22"
+                        RadiusX="1.25"
+                        RadiusY="1.25"
+                        Fill="#26000000" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!--  半展开态：有音乐播放时的竖向细长"岛"（胶囊形：封面在上，均衡器 + 歌名/歌手/歌词在下）  -->
+        <Grid
+            x:Name="NowPlayingStrip"
+            Opacity="0"
+            RenderTransformOrigin="0,0.5"
+            Visibility="Collapsed">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="NowPlayingScale" />
+            </Grid.RenderTransform>
+            <Border
+                x:Name="NowPlayingBorder"
+                Width="48"
+                Height="236"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Background="#FF101218"
+                BorderThickness="0"
+                CornerRadius="24"
+                ToolTipService.ToolTip="点击展开 EdgePanel">
+                <StackPanel
+                    Padding="5,12"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="5">
+
+                    <Border
+                        x:Name="NowCoverHost"
+                        Width="38"
+                        Height="38"
+                        HorizontalAlignment="Center"
+                        Background="#22FFFFFF"
+                        CornerRadius="19">
+                        <Image x:Name="NowCover" Stretch="UniformToFill" />
+                    </Border>
+
+                    <!--  播放中动效：跳动的均衡器条  -->
+                    <StackPanel
+                        x:Name="NowEqualizer"
+                        Height="12"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="3">
+                        <Rectangle
+                            Width="3"
+                            Height="12"
+                            Fill="#FF7FD4FF"
+                            RadiusX="1.5"
+                            RadiusY="1.5"
+                            RenderTransformOrigin="0.5,1">
+                            <Rectangle.RenderTransform>
+                                <ScaleTransform x:Name="EqBar1" />
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                        <Rectangle
+                            Width="3"
+                            Height="12"
+                            Fill="#FF7FD4FF"
+                            RadiusX="1.5"
+                            RadiusY="1.5"
+                            RenderTransformOrigin="0.5,1">
+                            <Rectangle.RenderTransform>
+                                <ScaleTransform x:Name="EqBar2" />
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                        <Rectangle
+                            Width="3"
+                            Height="12"
+                            Fill="#FF7FD4FF"
+                            RadiusX="1.5"
+                            RadiusY="1.5"
+                            RenderTransformOrigin="0.5,1">
+                            <Rectangle.RenderTransform>
+                                <ScaleTransform x:Name="EqBar3" />
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                        <Rectangle
+                            Width="3"
+                            Height="12"
+                            Fill="#FF7FD4FF"
+                            RadiusX="1.5"
+                            RadiusY="1.5"
+                            RenderTransformOrigin="0.5,1">
+                            <Rectangle.RenderTransform>
+                                <ScaleTransform x:Name="EqBar4" />
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </StackPanel>
+
+                    <TextBlock
+                        x:Name="NowTitle"
+                        HorizontalAlignment="Center"
+                        FontSize="11"
+                        FontWeight="SemiBold"
+                        MaxLines="2"
+                        TextAlignment="Center"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        x:Name="NowArtist"
+                        HorizontalAlignment="Center"
+                        FontSize="9"
+                        MaxLines="1"
+                        Opacity="0.6"
+                        TextAlignment="Center"
+                        TextTrimming="CharacterEllipsis" />
+                    <controls:MarqueeText
+                        x:Name="NowLyric"
+                        FontSize="10"
+                        Foreground="#FF7FD4FF"
+                        Speed="34" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!--
+            消息岛：截到 QQ / 微信等系统弹窗消息时占用同一个胶囊形态（48x236），
+            弹入 + 循环扫光 + 描边呼吸。角标底色按来源应用哈希取色，
+            扫光条的位移范围刻意留足余量，保证光带不会跑到胶囊外面。
+        -->
+        <Grid
+            x:Name="MessageStrip"
+            Opacity="0"
+            RenderTransformOrigin="0,0.5"
+            Visibility="Collapsed">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="MessageScale" />
+            </Grid.RenderTransform>
+            <Border
+                x:Name="MessageBorder"
+                Width="48"
+                Height="236"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Background="#FF101218"
+                BorderThickness="0"
+                CornerRadius="24"
+                ToolTipService.ToolTip="点击展开 EdgePanel">
+                <Grid>
+
+                    <!--  呼吸描边：颜色在填充内容时按来源应用着色  -->
+                    <Border
+                        x:Name="MessageGlow"
+                        IsHitTestVisible="False"
+                        BorderThickness="1.5"
+                        CornerRadius="24"
+                        Opacity="0.25" />
+
+                    <!--  扫光：一条柔和高光在胶囊内部上下扫过  -->
+                    <Border
+                        x:Name="MessageSweep"
+                        Width="34"
+                        Height="86"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        CornerRadius="17"
+                        IsHitTestVisible="False"
+                        Opacity="0.55">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Offset="0" Color="#00FFFFFF" />
+                                <GradientStop Offset="0.5" Color="#4DFFFFFF" />
+                                <GradientStop Offset="1" Color="#00FFFFFF" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.RenderTransform>
+                            <TranslateTransform x:Name="MessageSweepTranslate" />
+                        </Border.RenderTransform>
+                    </Border>
+
+                    <StackPanel
+                        Padding="5,12"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="5">
+                        <Border
+                            x:Name="MessageBadge"
+                            Width="38"
+                            Height="38"
+                            HorizontalAlignment="Center"
+                            CornerRadius="19">
+                            <TextBlock
+                                x:Name="MessageBadgeText"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="17"
+                                FontWeight="Bold"
+                                Foreground="White" />
+                        </Border>
+
+                        <TextBlock
+                            x:Name="MessageApp"
+                            HorizontalAlignment="Center"
+                            FontSize="10"
+                            FontWeight="SemiBold"
+                            MaxLines="1"
+                            Opacity="0.85"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis" />
+                        <TextBlock
+                            x:Name="MessageTitle"
+                            HorizontalAlignment="Center"
+                            FontSize="11"
+                            FontWeight="SemiBold"
+                            MaxLines="3"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap" />
+                        <controls:MarqueeText
+                            x:Name="MessageBody"
+                            FontSize="10"
+                            Foreground="#FFB9C7FF"
+                            Speed="34" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!--
+            展开态：完整面板。
+            尺寸由 SyncExpandedFrame() 钉死在"最终面板尺寸"上，绝不跟着窗口一起伸缩——
+            窗口在展开/收起时只当一张"帘子"，把这块排好版的内容一点点露出来或盖回去。
+            如果让它跟着窗口拉伸，动画的每一帧都是一个新宽度，导航栏/卡片/文字会连续重排，
+            看起来就像被捏扁又撑开，这才是"难看"的根源。
+        -->
+        <Grid
+            x:Name="ExpandedHost"
+            Opacity="0"
+            Visibility="Collapsed">
+            <Border
+                x:Name="GlassBorder"
+                Background="#40000000"
+                BorderBrush="#59FFFFFF"
+                BorderThickness="1"
+                CornerRadius="18">
+                <Grid>
+                    <!--  液态玻璃高光层  -->
+                    <Border
+                        x:Name="SheenLayer"
+                        IsHitTestVisible="False"
+                        CornerRadius="18"
+                        Opacity="0.85">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0" Color="#33FFFFFF" />
+                                <GradientStop Offset="0.25" Color="#12FFFFFF" />
+                                <GradientStop Offset="0.55" Color="#00FFFFFF" />
+                                <GradientStop Offset="1" Color="#1A00A2FF" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--  头部：拖动区 + 操作按钮  -->
+                        <Grid
+                            x:Name="Header"
+                            Grid.Row="0"
+                            Height="48"
+                            Padding="14,0,8,0"
+                            Background="Transparent"
+                            PointerPressed="Header_PointerPressed">
+                            <StackPanel
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <FontIcon
+                                    x:Name="DragGlyph"
+                                    FontSize="14"
+                                    Glyph="&#xE76F;"
+                                    Opacity="0.65" />
+                                <TextBlock
+                                    x:Name="HeaderTitle"
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="EdgePanel" />
+                            </StackPanel>
+
+                            <StackPanel
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="2">
+                                <Button
+                                    x:Name="PinButton"
+                                    Click="PinButton_Click"
+                                    ToolTipService.ToolTip="钉住面板">
+                                    <FontIcon FontSize="14" Glyph="&#xE718;" />
+                                </Button>
+                                <Button
+                                    x:Name="CollapseButton"
+                                    Click="CollapseButton_Click"
+                                    ToolTipService.ToolTip="收起面板">
+                                    <FontIcon FontSize="14" Glyph="&#xE76B;" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <!--  跑马灯  -->
+                        <Border
+                            x:Name="MarqueeHost"
+                            Grid.Row="1"
+                            Height="32"
+                            Margin="12,0,12,8"
+                            Background="{ThemeResource MarqueeHostBackgroundBrush}"
+                            BorderBrush="{ThemeResource MarqueeHostBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                            <controls:MarqueeText
+                                x:Name="Marquee"
+                                Margin="10,0"
+                                FontSize="14"
+                                Foreground="{ThemeResource MarqueeTextBrush}"
+                                Speed="70" />
+                        </Border>
+
+                        <!--  导航 + 内容  -->
+                        <NavigationView
+                            x:Name="Nav"
+                            Grid.Row="2"
+                            CompactModeThresholdWidth="0"
+                            ExpandedModeThresholdWidth="0"
+                            IsBackButtonVisible="Collapsed"
+                            IsPaneOpen="False"
+                            IsPaneToggleButtonVisible="False"
+                            IsSettingsVisible="False"
+                            OpenPaneLength="196"
+                            PaneDisplayMode="LeftCompact"
+                            SelectionChanged="Nav_SelectionChanged">
+                            <Frame x:Name="ContentFrame" />
+                        </NavigationView>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

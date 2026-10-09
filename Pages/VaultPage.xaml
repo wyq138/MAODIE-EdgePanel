@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="EdgePanel.Pages.VaultPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Margin="14">
+
+        <!--  还没有保险箱：设置主密码  -->
+        <ScrollViewer
+            x:Name="NoVaultPanel"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="10">
+                <TextBlock Text="密码保险箱" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <StackPanel Spacing="10">
+                        <TextBlock
+                            FontSize="11"
+                            Opacity="0.75"
+                            Text="凭据用 AES-256 加密保存在本机（vault.dat），主密码只用于派生密钥、不会落地。首次使用请先设置主密码。"
+                            TextWrapping="Wrap" />
+                        <PasswordBox
+                            x:Name="CreatePassBox"
+                            Header="设置主密码"
+                            PlaceholderText="至少 6 位" />
+                        <PasswordBox
+                            x:Name="CreatePass2Box"
+                            Header="确认主密码" />
+                        <Button
+                            x:Name="CreateButton"
+                            Click="Create_Click"
+                            Content="创建保险箱"
+                            Style="{StaticResource AccentButtonStyle}" />
+                        <TextBlock
+                            x:Name="NoVaultErrorText"
+                            FontSize="11"
+                            Foreground="#FFFF7B7B"
+                            TextWrapping="Wrap"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!--  有保险箱但已锁定：输入主密码解锁  -->
+        <ScrollViewer
+            x:Name="LockedPanel"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="Collapsed">
+            <StackPanel Spacing="10">
+                <TextBlock Text="密码保险箱 · 已锁定" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <StackPanel Spacing="10">
+                        <PasswordBox
+                            x:Name="UnlockPassBox"
+                            Header="主密码"
+                            PlaceholderText="输入主密码解锁" />
+                        <Button
+                            x:Name="UnlockButton"
+                            Click="Unlock_Click"
+                            Content="解锁"
+                            Style="{StaticResource AccentButtonStyle}" />
+                        <TextBlock
+                            x:Name="LockedErrorText"
+                            FontSize="11"
+                            Foreground="#FFFF7B7B"
+                            TextWrapping="Wrap"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Border>
+
+                <!--  忘记主密码：主密码不可找回，只能重置（清空全部凭据）  -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel Spacing="8">
+                        <TextBlock
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Text="忘记主密码？" />
+                        <TextBlock
+                            FontSize="11"
+                            Foreground="#FFFF7B7B"
+                            Text="主密码只用于派生加密密钥，本机不保存、无法找回。继续将删除保险箱及其中的全部凭据，此操作不可撤销。"
+                            TextWrapping="Wrap" />
+                        <TextBox
+                            x:Name="ResetConfirmBox"
+                            Header="输入「重置」确认"
+                            PlaceholderText="重置" />
+                        <Button
+                            x:Name="ResetButton"
+                            Click="Reset_Click"
+                            Content="重置保险箱（删除全部凭据）"
+                            Foreground="#FFFF7B7B" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!--  已解锁：管理凭据（整体可滚动，条目多时直接拉到底）  -->
+        <ScrollViewer
+            x:Name="UnlockedPanel"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="Collapsed">
+            <StackPanel Spacing="10">
+
+                <!--  状态行  -->
+                <Grid ColumnSpacing="8">
+                    <TextBlock
+                        x:Name="CountText"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Opacity="0.7" />
+                    <StackPanel
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <Button
+                            x:Name="LockButton"
+                            Click="Lock_Click"
+                            Content="锁定" />
+                    </StackPanel>
+                </Grid>
+
+                <!--  添加凭据  -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="添加凭据" FontSize="12" FontWeight="SemiBold" />
+                        <TextBox
+                            x:Name="AddAppBox"
+                            Header="应用 / 网站"
+                            PlaceholderText="例如：Microsoft Edge" />
+                        <TextBox
+                            x:Name="AddAccountBox"
+                            Header="账号"
+                            PlaceholderText="邮箱 / 用户名（可留空）" />
+                        <PasswordBox
+                            x:Name="AddPassBox"
+                            Header="密码" />
+                        <TextBox
+                            x:Name="AddNoteBox"
+                            Header="备注（可留空）" />
+                        <Button
+                            x:Name="AddButton"
+                            Click="Add_Click"
+                            Content="存入保险箱"
+                            Style="{StaticResource AccentButtonStyle}" />
+                        <TextBlock
+                            x:Name="AddErrorText"
+                            FontSize="11"
+                            Foreground="#FFFF7B7B"
+                            TextWrapping="Wrap"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Border>
+
+                <!--  凭据列表  -->
+                <StackPanel x:Name="ItemsPanel" Spacing="8" />
+
+                <!--  更换主密码  -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="更换主密码" FontSize="12" FontWeight="SemiBold" />
+                        <PasswordBox
+                            x:Name="ChangeOldBox"
+                            Header="当前主密码" />
+                        <PasswordBox
+                            x:Name="ChangeNewBox"
+                            Header="新主密码"
+                            PlaceholderText="至少 6 位" />
+                        <PasswordBox
+                            x:Name="ChangeNew2Box"
+                            Header="确认新主密码" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button
+                                x:Name="ChangeButton"
+                                Click="Change_Click"
+                                Content="更换" />
+                            <TextBlock
+                                x:Name="ChangeErrorText"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="#FFFF7B7B"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

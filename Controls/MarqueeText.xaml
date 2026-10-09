@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="EdgePanel.Controls.MarqueeText"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
+    <Grid
+        x:Name="Host"
+        Background="Transparent"
+        SizeChanged="Host_SizeChanged">
+        <StackPanel
+            x:Name="Track"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="64">
+            <StackPanel.RenderTransform>
+                <TranslateTransform x:Name="Shift" />
+            </StackPanel.RenderTransform>
+            <TextBlock
+                x:Name="Primary"
+                VerticalAlignment="Center"
+                Text="" />
+            <TextBlock
+                x:Name="Secondary"
+                VerticalAlignment="Center"
+                Text=""
+                Visibility="Collapsed" />
+        </StackPanel>
+    </Grid>
+</UserControl>

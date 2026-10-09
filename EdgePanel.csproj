@@ -1,0 +1,95 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>EdgePanel</RootNamespace>
+    <AssemblyName>EdgePanel</AssemblyName>
+    <AssemblyTitle>MAODIE EdgePanel</AssemblyTitle>
+    <Product>MAODIE EdgePanel</Product>
+    <ApplicationIcon>123456.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</RuntimeIdentifier>
+    <UseWinUI>true</UseWinUI>
+    <WinUISDKReferences>false</WinUISDKReferences>
+    <EnableMsixTooling>false</EnableMsixTooling>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DefaultLanguage>zh-CN</DefaultLanguage>
+    <NeutralLanguage>zh-CN</NeutralLanguage>
+    <LangVersion>latest</LangVersion>
+    <!-- 调原生消息桥的导出函数需要函数指针 -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- 免安装（unpackaged）+ Windows App SDK 自包含：双击 exe 即可运行，不依赖系统已安装运行时 -->
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <SelfContained>true</SelfContained>
+    <EnableWinAppRunSupport>false</EnableWinAppRunSupport>
+    <!-- WinUI 3 不支持 IL 裁剪 -->
+    <PublishTrimmed>False</PublishTrimmed>
+    <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+    <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ToastBridge 是独立的 Native AOT 子工程，它自己的源码/中间产物一律不参与主工程编译 -->
+    <Compile Remove="ToastBridge\**" />
+    <None Remove="ToastBridge\**" />
+    <Content Remove="ToastBridge\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\StoreLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <!-- 原生消息桥（Native AOT 产物）：放在 Assets\Native，随包分发到根目录同名 dll -->
+    <Content Include="Assets\Native\ToastBridge.dll">
+      <Link>ToastBridge.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 随包分发的内置离线 OCR 模型：PP-OCRv5 日文（ch 模型含日文）与韩文识别模型 + 字典。
+         有了它们，客户机即使没装 ja/ko 的 Windows OCR 语言包，也能识别日语/韩语歌词。 -->
+    <Content Include="Assets\Ocr\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+    <!-- SMTC 媒体会话封装（BetterLyrics 作者 jayfunc 的维护版 Fork） -->
+    <PackageReference Include="Dubya.WindowsMediaController.Jayfunc" Version="2.5.6" />
+    <PackageReference Include="RapidOcrNet" Version="4.2.0" />
+  </ItemGroup>
+
+  <!--
+    身份包必须叫 AppxManifest.xml 才能被 Add-AppxPackage 识别，但它只是"户口本"，
+    真正的应用文件靠 -ExternalLocation 指过来。整包放到 exe 旁的 Package\ 子目录，
+    由启动时注册稀疏包时使用（这样应用目录不会被 AppX 锁死，exe 照常双击运行）。
+  -->
+  <Target Name="CopyIdentityPackage" AfterTargets="Build">
+    <ItemGroup>
+      <_IdentityPackageFiles Include="$(MSBuildProjectDirectory)\Package\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_IdentityPackageFiles)" DestinationFolder="$(OutDir)Package\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyIdentityPackageOnPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <_IdentityPackageFiles Include="$(MSBuildProjectDirectory)\Package\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_IdentityPackageFiles)" DestinationFolder="$(PublishDir)Package\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

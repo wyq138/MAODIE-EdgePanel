@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="EdgePanel.Pages.MarqueePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:EdgePanel.Controls">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="14" Spacing="12">
+
+            <TextBlock Text="跑马灯内容" Style="{StaticResource SectionTitle}" />
+            <TextBox
+                x:Name="TextInput"
+                AcceptsReturn="True"
+                MinHeight="72"
+                PlaceholderText="输入要滚动显示的文字…"
+                TextChanged="TextInput_TextChanged" />
+
+            <Border
+                Height="44"
+                Background="{ThemeResource MarqueeHostBackgroundBrush}"
+                BorderBrush="{ThemeResource MarqueeHostBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="10">
+                <controls:MarqueeText
+                    x:Name="Preview"
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    Foreground="{ThemeResource MarqueeTextBrush}" />
+            </Border>
+
+            <TextBlock Text="滚动速度" Style="{StaticResource SectionTitle}" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Slider
+                    x:Name="SpeedSlider"
+                    Width="210"
+                    Maximum="260"
+                    Minimum="20"
+                    ValueChanged="SpeedSlider_ValueChanged" />
+                <TextBlock
+                    x:Name="SpeedText"
+                    VerticalAlignment="Center"
+                    Opacity="0.75" />
+            </StackPanel>
+
+            <TextBlock Text="字号" Style="{StaticResource SectionTitle}" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Slider
+                    x:Name="FontSlider"
+                    Width="210"
+                    Maximum="30"
+                    Minimum="10"
+                    ValueChanged="FontSlider_ValueChanged" />
+                <TextBlock
+                    x:Name="FontText"
+                    VerticalAlignment="Center"
+                    Opacity="0.75" />
+            </StackPanel>
+
+            <ToggleSwitch
+                x:Name="EnableSwitch"
+                Header="在面板顶部显示跑马灯"
+                Toggled="EnableSwitch_Toggled" />
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Click="Apply_Click" Content="应用到面板" Style="{StaticResource AccentButtonStyle}" />
+                <Button Click="Preset_Click" Content="插入示例文字" />
+            </StackPanel>
+
+            <TextBlock
+                Margin="2,4,0,0"
+                Opacity="0.6"
+                Text="提示：跑马灯文字超出宽度时才会滚动，未超出则静止显示。"
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

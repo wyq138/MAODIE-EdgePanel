@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Application
+    x:Class="EdgePanel.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--  深浅色主题下的自定义画刷（跟随 RequestedTheme 自动切换）  -->
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#14000000" />
+                    <SolidColorBrush x:Key="CardBorderBrush" Color="#1A000000" />
+
+                    <!--  跑马灯：文字走"青 → 靛蓝 → 品红"流彩渐变，底与描边是同色系半透明渐变  -->
+                    <LinearGradientBrush x:Key="MarqueeTextBrush" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="#FF0A84D8" />
+                        <GradientStop Offset="0.5" Color="#FF5B45C8" />
+                        <GradientStop Offset="1" Color="#FFC42A8C" />
+                    </LinearGradientBrush>
+                    <LinearGradientBrush x:Key="MarqueeHostBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="#1A8A7BFF" />
+                        <GradientStop Offset="1" Color="#1200C8FF" />
+                    </LinearGradientBrush>
+                    <LinearGradientBrush x:Key="MarqueeHostBorderBrush" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="#445B45C8" />
+                        <GradientStop Offset="1" Color="#330A84D8" />
+                    </LinearGradientBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1FFFFFFF" />
+                    <SolidColorBrush x:Key="CardBorderBrush" Color="#26FFFFFF" />
+
+                    <LinearGradientBrush x:Key="MarqueeTextBrush" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="#FF5BE0FF" />
+                        <GradientStop Offset="0.5" Color="#FF8A7BFF" />
+                        <GradientStop Offset="1" Color="#FFFF6BD6" />
+                    </LinearGradientBrush>
+                    <LinearGradientBrush x:Key="MarqueeHostBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="#337C6BFF" />
+                        <GradientStop Offset="1" Color="#1F00D2FF" />
+                    </LinearGradientBrush>
+                    <LinearGradientBrush x:Key="MarqueeHostBorderBrush" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="#668A7BFF" />
+                        <GradientStop Offset="1" Color="#4400D2FF" />
+                    </LinearGradientBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <!--  玻璃卡片  -->
+            <Style x:Key="Card" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="12" />
+            </Style>
+
+            <Style x:Key="SectionTitle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Opacity" Value="0.7" />
+                <Setter Property="Margin" Value="2,0,0,6" />
+            </Style>
+
+            <Style x:Key="MetricValue" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+
+            <Style x:Key="MetricLabel" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="Opacity" Value="0.65" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

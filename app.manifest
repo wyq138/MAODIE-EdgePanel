@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="EdgePanel.app"/>
+
+  <!--
+    和身份包（Package\AppxManifest.xml）对接：注册了稀疏包之后，
+    Windows 靠这三个字段认出本 exe 属于哪个包，从而在启动时把包标识发给进程。
+    packageName / publisher / applicationId 必须与 AppxManifest 里的
+    Identity@Name、Identity@Publisher、Application@Id 完全一致。
+  -->
+  <msix xmlns="urn:schemas-microsoft-com:msix.v1"
+        packageName="EdgePanel.Sidebar"
+        publisher="CN=EdgePanel"
+        applicationId="EdgePanel" />
+
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- 声明兼容 Windows 10，免安装模式下自定义标题栏 / 置顶窗口才可正常工作 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+    </application>
+  </compatibility>
+
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+      <longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+    </windowsSettings>
+  </application>
+</assembly>

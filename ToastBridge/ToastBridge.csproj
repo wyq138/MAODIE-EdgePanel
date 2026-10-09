@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    原生消息桥（Native AOT）：把 Windows 通知平台的实时推送（UserNotificationListener.NotificationChanged）
+    封成一个原生 DLL，导出 C 接口供主程序直接调用。
+    主程序是免安装（无包标识）的 WinUI 应用，托管投影里订阅该事件会抛 0x80070490；
+    这里用 Native AOT 直接走 WinRT，绕开托管投影的注册路径，给主程序提供一条实时通道。
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ToastBridge</RootNamespace>
+    <AssemblyName>ToastBridge</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+
+    <!-- 原生 AOT + 共享库：产物就是一个可被 LoadLibrary 加载的原生 dll -->
+    <PublishAot>true</PublishAot>
+    <NativeLib>Shared</NativeLib>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PlatformTarget>x64</PlatformTarget>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <StripSymbols>true</StripSymbols>
+  </PropertyGroup>
+</Project>

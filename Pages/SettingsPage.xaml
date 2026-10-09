@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="EdgePanel.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="14" Spacing="10">
+
+            <TextBlock Text="面板" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <ToggleSwitch
+                        x:Name="PanelToggle"
+                        Header="启用贴边面板"
+                        OffContent="关闭"
+                        OnContent="开启"
+                        Toggled="PanelToggle_Toggled" />
+                    <ToggleSwitch
+                        x:Name="FollowMonitorToggle"
+                        Header="跟随鼠标所在显示器（多显示器）"
+                        OffContent="固定主显示器"
+                        OnContent="跟随光标显示器"
+                        Toggled="FollowMonitor_Toggled" />
+                    <ToggleSwitch
+                        x:Name="AutoCollapseToggle"
+                        Header="鼠标移开自动收起"
+                        OffContent="常驻展开"
+                        OnContent="自动收起"
+                        Toggled="AutoCollapse_Toggled" />
+
+                    <StackPanel>
+                        <TextBlock x:Name="WidthLabel" FontSize="12" Opacity="0.75" />
+                        <Slider x:Name="WidthSlider" ValueChanged="Width_Changed" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock x:Name="DelayLabel" FontSize="12" Opacity="0.75" />
+                        <Slider x:Name="DelaySlider" ValueChanged="Delay_Changed" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock x:Name="IdleLabel" FontSize="12" Opacity="0.75" />
+                        <Slider x:Name="IdleSlider" ValueChanged="Idle_Changed" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="外观材质" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <ComboBox
+                        x:Name="MaterialBox"
+                        HorizontalAlignment="Stretch"
+                        Header="材质"
+                        SelectionChanged="Material_Changed">
+                        <ComboBoxItem Content="液态玻璃（推荐）" Tag="LiquidGlass" />
+                        <ComboBoxItem Content="亚克力 Acrylic" Tag="Acrylic" />
+                        <ComboBoxItem Content="云母 Mica" Tag="Mica" />
+                        <ComboBoxItem Content="纯色" Tag="Solid" />
+                    </ComboBox>
+
+                    <ComboBox
+                        x:Name="ThemeBox"
+                        HorizontalAlignment="Stretch"
+                        Header="主题（深色 / 浅色 / 跟随系统）"
+                        SelectionChanged="Theme_Changed">
+                        <ComboBoxItem Content="跟随系统" Tag="System" />
+                        <ComboBoxItem Content="浅色" Tag="Light" />
+                        <ComboBoxItem Content="深色" Tag="Dark" />
+                    </ComboBox>
+
+                    <StackPanel>
+                        <TextBlock x:Name="OpacityLabel" FontSize="12" Opacity="0.75" />
+                        <Slider x:Name="OpacitySlider" ValueChanged="Opacity_Changed" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock x:Name="CornerLabel" FontSize="12" Opacity="0.75" />
+                        <Slider x:Name="CornerSlider" ValueChanged="Corner_Changed" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="跑马灯" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <ToggleSwitch
+                        x:Name="MarqueeToggle"
+                        Header="显示跑马灯"
+                        OffContent="隐藏"
+                        OnContent="显示"
+                        Toggled="Marquee_Toggled" />
+                    <TextBox
+                        x:Name="MarqueeBox"
+                        Header="滚动文字"
+                        LostFocus="MarqueeText_LostFocus"
+                        PlaceholderText="输入要滚动显示的文字" />
+                    <StackPanel>
+                        <TextBlock x:Name="SpeedLabel" FontSize="12" Opacity="0.75" />
+                        <Slider x:Name="SpeedSlider" ValueChanged="Speed_Changed" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="歌词" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <TextBox
+                        x:Name="LyricsFolderBox"
+                        Header="LRC 歌词搜索目录（多个用 ; 分隔）"
+                        IsReadOnly="True"
+                        TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="PickLyricsFolder_Click" Content="添加目录" />
+                        <Button Click="ClearLyricsFolder_Click" Content="清空目录" />
+                    </StackPanel>
+                    <ToggleSwitch
+                        x:Name="OnlineLyricsToggle"
+                        Header="找不到本地歌词时尝试在线获取"
+                        OffContent="仅本地"
+                        OnContent="允许在线"
+                        Toggled="OnlineLyrics_Toggled" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="电脑助手（控制本机）" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="10">
+                    <TextBlock
+                        FontSize="11"
+                        Opacity="0.75"
+                        Text="OpenAI 兼容接口，模型由你自行配置（DeepSeek / 通义 / Kimi / 智谱 / Ollama / LM Studio 等均可）。填完即生效。"
+                        TextWrapping="Wrap" />
+                    <TextBox
+                        x:Name="AssistantBaseBox"
+                        Header="Base URL"
+                        LostFocus="AssistantBase_LostFocus"
+                        PlaceholderText="https://api.deepseek.com/v1" />
+                    <PasswordBox
+                        x:Name="AssistantKeyBox"
+                        Header="API Key"
+                        LostFocus="AssistantKey_LostFocus"
+                        PlaceholderText="sk-..." />
+                    <TextBox
+                        x:Name="AssistantModelBox"
+                        Header="模型名"
+                        LostFocus="AssistantModel_LostFocus"
+                        PlaceholderText="deepseek-chat" />
+                    <ToggleSwitch
+                        x:Name="AssistantVisionToggle"
+                        Header="把截图发给模型（需模型支持视觉）"
+                        OffContent="不发送"
+                        OnContent="发送"
+                        Toggled="AssistantVision_Toggled" />
+                    <ToggleSwitch
+                        x:Name="AssistantCmdToggle"
+                        Header="允许执行命令行（风险较高）"
+                        OffContent="禁止"
+                        OnContent="允许"
+                        Toggled="AssistantCmd_Toggled" />
+                    <ToggleSwitch
+                        x:Name="AssistantFileToggle"
+                        Header="允许读写本地文件（风险较高）"
+                        OffContent="禁止"
+                        OnContent="允许"
+                        Toggled="AssistantFile_Toggled" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="其它" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Text="开发者信息" />
+                    <TextBlock
+                        FontSize="11"
+                        Opacity="0.75"
+                        Text="开发者：耄耋软件工作室" />
+                    <TextBlock
+                        FontSize="11"
+                        Opacity="0.75"
+                        Text="电话：18281970402" />
+                    <HyperlinkButton
+                        Content="邮箱：zjhwyq123456@qq.com"
+                        FontSize="11"
+                        NavigateUri="mailto:zjhwyq123456@qq.com" />
+                    <TextBlock
+                        x:Name="PathText"
+                        FontSize="11"
+                        Opacity="0.7"
+                        TextWrapping="Wrap" />
+                    <ComboBox
+                        x:Name="LanguageBox"
+                        HorizontalAlignment="Stretch"
+                        Header="界面语言（面板标题与导航）"
+                        SelectionChanged="Language_Changed">
+                        <ComboBoxItem Content="简体中文" Tag="zh-CN" />
+                        <ComboBoxItem Content="English" Tag="en-US" />
+                    </ComboBox>
+                    <ToggleSwitch
+                        x:Name="StartupToggle"
+                        Header="开机自动启动"
+                        OffContent="关闭"
+                        OnContent="开启"
+                        Toggled="Startup_Toggled" />
+                    <TextBlock
+                        x:Name="UpdateText"
+                        FontSize="11"
+                        Opacity="0.75"
+                        TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="CheckUpdate_Click" Content="检查更新" />
+                        <Button Click="OpenConfig_Click" Content="打开配置目录" />
+                        <Button Click="OpenLog_Click" Content="打开日志目录" />
+                    </StackPanel>
+                    <Button
+                        HorizontalAlignment="Left"
+                        Click="Exit_Click"
+                        Content="退出 EdgePanel"
+                        Foreground="#FFFF7B7B" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
