@@ -9,3 +9,15 @@ release/
 AppPackages/
 *.user
 *.suo
+publish_msix/
+publish_release/
+publish_selfcontained/
+*.msix
+_pack_msix.py
+msix_stage/
+publish_release/
+publish_selfcontained/
+publish_msix/
+EdgePanel-release-win-x64.zip
+*.msix
+_pack_msix.py
