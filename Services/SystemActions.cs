@@ -40,15 +40,22 @@ public static class SystemActions
         try
         {
             var temp = Path.GetTempPath();
-            foreach (var file in Directory.EnumerateFiles(temp))
+            foreach (var entry in Directory.EnumerateFileSystemEntries(temp))
             {
                 try
                 {
-                    File.Delete(file);
+                    if (Directory.Exists(entry))
+                    {
+                        Directory.Delete(entry, recursive: true); // 临时垃圾大多在子目录里
+                    }
+                    else
+                    {
+                        File.Delete(entry);
+                    }
                 }
                 catch
                 {
-                    // 被占用的文件跳过
+                    // 被占用的文件/目录跳过
                 }
             }
         }
@@ -78,6 +85,23 @@ public static class SystemActions
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
+            });
+        }
+        catch (Exception ex)
+        {
+            App.Log($"执行命令失败 {command}：{ex.Message}");
+        }
+    }
+
+    /// <summary>执行命令并显示控制台窗口（需要用户看到输出的命令，如 ipconfig）。</summary>
+    public static void RunCommandVisible(string command)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo("cmd.exe", "/k " + command)
+            {
+                CreateNoWindow = false,
+                UseShellExecute = true,
             });
         }
         catch (Exception ex)

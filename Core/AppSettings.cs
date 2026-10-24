@@ -158,8 +158,8 @@ public sealed class AppSettings
     /// <summary>界面语言：zh-CN / en-US。</summary>
     public string Language { get; set; } = "zh-CN";
 
-    /// <summary>检查更新用的版本信息地址（留空则只显示本地版本）。</summary>
-    public string UpdateCheckUrl { get; set; } = "";
+    /// <summary>检查更新用的地址：支持 GitHub releases API（…/releases/latest）或自定义版本信息 JSON。</summary>
+    public string UpdateCheckUrl { get; set; } = "https://api.github.com/repos/wyq138/MAODIE-EdgePanel/releases/latest";
 
     // —— 电脑助手（内置 AI 助手，OpenAI 兼容接口，模型由用户自行配置）——
 
