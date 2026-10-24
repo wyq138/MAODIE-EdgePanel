@@ -76,6 +76,8 @@ public sealed partial class MusicPage : Page
     {
         DispatcherQueue.TryEnqueue(async () =>
         {
+            try
+            {
             if (!info.HasSession)
             {
                 TitleMarquee.Text = "无播放中的媒体";
@@ -136,6 +138,11 @@ public sealed partial class MusicPage : Page
             }
 
             UpdateLyricHighlight(LyricsService.Instance.IndexAt(info.Position));
+            }
+            catch (Exception ex)
+            {
+                App.Log("媒体信息更新失败：" + ex.Message);
+            }
         });
     }
 

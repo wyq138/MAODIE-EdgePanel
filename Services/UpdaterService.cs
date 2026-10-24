@@ -15,9 +15,28 @@ public static class UpdaterService
     /// </summary>
     public static async Task<string> CheckAsync(string url)
     {
+        // 商店分发的包禁止自更新（Store 政策 10.8.2），检查更新功能只对商店外渠道开放
+        try
+        {
+            if (Windows.ApplicationModel.Package.Current?.SignatureKind
+                == Windows.ApplicationModel.PackageSignatureKind.Store)
+            {
+                return $"当前版本 {CurrentVersion}。商店版更新由 Microsoft Store 接管。";
+            }
+        }
+        catch
+        {
+            // 无包身份（免安装）时继续走自托管更新检查
+        }
+
         if (string.IsNullOrWhiteSpace(url))
         {
             return $"当前版本 {CurrentVersion}。未配置更新地址：可在 settings.json 的 UpdateCheckUrl 填入版本信息 JSON 地址。";
+        }
+
+        if (!url.TrimStart().StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return "更新地址必须是 https:// 链接。";
         }
 
         try
@@ -41,8 +60,13 @@ public static class UpdaterService
 
             if (!string.IsNullOrWhiteSpace(link))
             {
-                SystemActions.OpenPath(link);
-                return $"发现新版本 {latest}（当前 {CurrentVersion}），已打开下载页面。";
+                if (link.TrimStart().StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    SystemActions.OpenPath(link);
+                    return $"发现新版本 {latest}（当前 {CurrentVersion}），已打开下载页面。";
+                }
+
+                return $"发现新版本 {latest}（当前 {CurrentVersion}），但下载地址不是 https 链接，已忽略。";
             }
 
             return $"发现新版本 {latest}（当前 {CurrentVersion}），但信息里没有下载地址。";

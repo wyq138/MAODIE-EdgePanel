@@ -43,6 +43,7 @@ public partial class App : Application
     private void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         Log("未处理异常: " + e.Exception);
+        e.Handled = true; // 单个页面/事件异常不应让整个侧边栏进程退出
     }
 
     /// <summary>运行时开启/关闭贴边面板（设置页调用）。</summary>

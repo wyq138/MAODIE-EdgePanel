@@ -135,7 +135,7 @@ public sealed partial class NetworkPage : Page
 
     private void OpenSettings_Click(object sender, RoutedEventArgs e) => SystemActions.OpenSettings();
 
-    private void IpConfig_Click(object sender, RoutedEventArgs e) => SystemActions.RunCommand("ipconfig /all & pause");
+    private void IpConfig_Click(object sender, RoutedEventArgs e) => SystemActions.RunCommand("ipconfig /all");
 
     private void OpenConnections_Click(object sender, RoutedEventArgs e) => SystemActions.RunCommand("ncpa.cpl");
 }

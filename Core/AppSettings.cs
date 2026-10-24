@@ -202,6 +202,8 @@ public static class SettingsStore
         WriteIndented = true,
         Converters = { new JsonStringEnumConverter() },
         DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+        // OffsetY 默认 double.NaN 表示垂直居中，不放开 NaN 会让整个 Save 抛异常、配置永远写不进去
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
     };
 
     public static string FilePath { get; } = Path.Combine(App.DataRoot, "settings.json");

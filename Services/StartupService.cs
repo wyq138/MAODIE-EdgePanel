@@ -68,7 +68,10 @@ public static class StartupService
     {
         try
         {
-            var tasks = StartupTask.GetForCurrentPackageAsync().GetAwaiter().GetResult();
+            // WinRT 异步的回调会投递回调用线程的上下文，直接在 UI 线程上
+            // GetResult() 会死锁，必须放到线程池里等
+            var tasks = Task.Run(() =>
+                StartupTask.GetForCurrentPackageAsync().GetAwaiter().GetResult()).GetAwaiter().GetResult();
             foreach (var task in tasks)
             {
                 if (task.TaskId == StartupTaskId)
@@ -97,7 +100,8 @@ public static class StartupService
         {
             if (enabled)
             {
-                var state = task.RequestEnableAsync().GetAwaiter().GetResult();
+                var state = Task.Run(() =>
+                    task.RequestEnableAsync().GetAwaiter().GetResult()).GetAwaiter().GetResult();
                 var ok = state is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy;
                 App.Log(ok
                     ? "已启用系统 StartupTask 开机自启"

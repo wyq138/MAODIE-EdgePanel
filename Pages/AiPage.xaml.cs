@@ -16,8 +16,10 @@ public sealed partial class AiPage : Page
 
     private async void Refresh()
     {
-        UsagePanel.Children.Clear();
-        WorkspacePanel.Children.Clear();
+        try
+        {
+            UsagePanel.Children.Clear();
+            WorkspacePanel.Children.Clear();
         QuotaText.Text = "正在扫描本机 AI 工具活动…";
 
         _snapshot = await Task.Run(AiAgentService.Scan);
@@ -141,10 +143,16 @@ public sealed partial class AiPage : Page
         TotalTokens.Text = FormatTokens(totalTokens);
 
         var foundCount = _snapshot.Usages.Count(u => u.Found);
-        QuotaText.Text =
-            $"共识别 {_snapshot.Usages.Count} 种 AI 工具，其中 {foundCount} 种在本机有痕迹。\n" +
-            $"今日合计 {todaySessions} 条记录、{FormatTokens(todayTokens)} Token；累计 {FormatTokens(totalTokens)} Token。\n" +
-            "官方限额需登录各工具账号查看，本地统计为尽力解析。";
+            QuotaText.Text =
+                $"共识别 {_snapshot.Usages.Count} 种 AI 工具，其中 {foundCount} 种在本机有痕迹。\n" +
+                $"今日合计 {todaySessions} 条记录、{FormatTokens(todayTokens)} Token；累计 {FormatTokens(totalTokens)} Token。\n" +
+                "官方限额需登录各工具账号查看，本地统计为尽力解析。";
+        }
+        catch (Exception ex)
+        {
+            App.Log("AI 页刷新失败：" + ex.Message);
+            QuotaText.Text = "扫描失败：" + ex.Message;
+        }
     }
 
     private static string FormatTokens(long tokens)

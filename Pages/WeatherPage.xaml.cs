@@ -182,6 +182,8 @@ public sealed partial class WeatherPage : Page
     {
         DispatcherQueue.TryEnqueue(async () =>
         {
+            try
+            {
             QrStatus.Text = $"已收到坐标 {lat:F6}, {lon:F6}，正在获取天气…";
 
             var s = SettingsStore.Current;
@@ -201,6 +203,12 @@ public sealed partial class WeatherPage : Page
             _pickServer = null;
 
             await RefreshAsync();
+            }
+            catch (Exception ex)
+            {
+                App.Log("坐标天气刷新失败：" + ex.Message);
+                QrStatus.Text = "获取天气失败：" + ex.Message;
+            }
         });
     }
 }

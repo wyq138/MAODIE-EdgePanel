@@ -72,7 +72,7 @@ public static class PackageIdentity
                 RedirectStandardError = true,
                 Arguments = "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "
                             + "\"$ErrorActionPreference='SilentlyContinue'; "
-                            + "Get-AppxPackage EdgePanel.Sidebar | Remove-AppxPackage; "
+                            + "Get-AppxPackage 7B6AFBFB.42750BAC206B9 | Remove-AppxPackage; "
                             + $"Add-AppxPackage -Register '{manifest}' -ExternalLocation '{appDir}'\"",
             };
 

@@ -9,8 +9,8 @@
     Identity@Name、Identity@Publisher、Application@Id 完全一致。
   -->
   <msix xmlns="urn:schemas-microsoft-com:msix.v1"
-        packageName="EdgePanel.Sidebar"
-        publisher="CN=EdgePanel"
+        packageName="7B6AFBFB.42750BAC206B9"
+        publisher="CN=7BD1F6AB-E08D-47AB-8C5B-8AC39E6AEC60"
         applicationId="EdgePanel" />
 
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
