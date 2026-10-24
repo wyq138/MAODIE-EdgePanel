@@ -5,10 +5,11 @@ using Windows.ApplicationModel;
 namespace EdgePanel.Services;
 
 /// <summary>
-/// 开机自启，三层兜底，保证拉得起来：
-///   1. 系统级 StartupTask（需包标识，MSIX / 稀疏包场景；Run 键在包注册表虚拟化下不生效，必须走这条）；
-///   2. HKCU\...\Run 注册表启动项（免安装默认路径）；
-///   3. 计划任务（schtasks，登录时启动；前两条都写不进去时的最后兜底）。
+/// 开机自启，按运行环境分流：
+///   - 有包标识（商店 MSIX / 稀疏包）：走系统 StartupTask（清单里声明 windows.startupTask 扩展）。
+///     Run 注册表键在包注册表虚拟化下会被重定向到包私有配置单元，写了也不生效，必须走这条；
+///   - 无包标识（免安装默认路径）：HKCU\...\Run 注册表启动项；
+///   - 计划任务（schtasks，登录时启动）：无包标识且 Run 键写不进去时的最后兜底。
 /// </summary>
 public static class StartupService
 {
@@ -20,9 +21,17 @@ public static class StartupService
     /// <summary>当前进程的可执行文件路径（自包含 exe）。</summary>
     public static string ExecutablePath => Environment.ProcessPath ?? "";
 
+    private static bool UseStartupTask => PackageIdentity.HasIdentity;
+
     /// <summary>注册表中是否已存在本程序的自启项。</summary>
     public static bool IsEnabled()
     {
+        if (UseStartupTask)
+        {
+            return GetStartupTask()?.State is StartupTaskState.Enabled
+                or StartupTaskState.EnabledByPolicy;
+        }
+
         try
         {
             using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, false);
@@ -45,13 +54,79 @@ public static class StartupService
     /// <summary>启用 / 停用开机自启；返回是否成功。</summary>
     public static bool SetEnabled(bool enabled)
     {
+        if (UseStartupTask)
+        {
+            return SetStartupTask(enabled);
+        }
+
+        return SetRunKey(enabled) || SetScheduledTask(enabled);
+    }
+
+    // ————————————————————————— StartupTask（MSIX / 稀疏包） —————————————————————————
+
+    private static StartupTask? GetStartupTask()
+    {
+        try
+        {
+            var tasks = StartupTask.GetForCurrentPackageAsync().GetAwaiter().GetResult();
+            foreach (var task in tasks)
+            {
+                if (task.TaskId == StartupTaskId)
+                {
+                    return task;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            App.Log("获取 StartupTask 失败：" + ex.Message);
+        }
+        return null;
+    }
+
+    private static bool SetStartupTask(bool enabled)
+    {
+        var task = GetStartupTask();
+        if (task is null)
+        {
+            App.Log("StartupTask 不存在（清单缺少 windows.startupTask 扩展？），改用计划任务兜底");
+            return SetScheduledTask(enabled);
+        }
+
+        try
+        {
+            if (enabled)
+            {
+                var state = task.RequestEnableAsync().GetAwaiter().GetResult();
+                var ok = state is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy;
+                App.Log(ok
+                    ? "已启用系统 StartupTask 开机自启"
+                    : $"StartupTask 请求启用被拒：{state}（用户可能在系统设置里关闭了自启）");
+                return ok;
+            }
+
+            task.Disable();
+            App.Log("已禁用系统 StartupTask 开机自启");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            App.Log("设置 StartupTask 失败：" + ex.Message);
+            return false;
+        }
+    }
+
+    // ————————————————————————— Run 注册表键（免安装） —————————————————————————
+
+    private static bool SetRunKey(bool enabled)
+    {
         try
         {
             using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true);
             if (key is null)
             {
                 App.Log("打开 Run 注册表项失败（无写权限），改用计划任务兜底");
-                return SetScheduledTask(enabled);
+                return false;
             }
 
             if (!enabled)
@@ -77,7 +152,7 @@ public static class StartupService
         catch (Exception ex)
         {
             App.Log("设置开机自启失败：" + ex.Message);
-            return SetScheduledTask(enabled);
+            return false;
         }
     }
 

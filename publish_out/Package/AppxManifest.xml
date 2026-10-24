@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  身份包清单（稀疏包 / 带外部位置的打包）。
+  免安装的 WinUI 应用本身没有包标识，导致 Windows 通知平台拒绝
+  UserNotificationListener.NotificationChanged 的事件订阅（0x80070490）。
+  这个清单只用来给应用"上户口"：注册后进程就有了包标识 + userNotificationListener 能力，
+  通知实时推送才被系统放行。它不改变应用的文件布局，exe 依旧原地运行。
+  注册：Add-AppxPackage -Register <应用目录>\AppxManifest.xml
+-->
+<Package
+  IgnorableNamespaces="uap uap10 uap5 rescap"
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5">
+
+  <Identity Name="7B6AFBFB.42750BAC206B9" Publisher="CN=7BD1F6AB-E08D-47AB-8C5B-8AC39E6AEC60" Version="1.0.0.0" ProcessorArchitecture="neutral" />
+
+  <Properties>
+    <DisplayName>耄耋侧边栏</DisplayName>
+    <PublisherDisplayName>耄耋杀毒软件开发团队</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <!-- 身份包只放清单本身，真正的应用文件用"外部位置"指过去，应用目录不会被锁 -->
+    <uap10:AllowExternalContent>true</uap10:AllowExternalContent>
+  </Properties>
+
+  <Resources>
+    <Resource Language="zh-CN" />
+  </Resources>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Capabilities>
+    <!-- 全信任 win32 应用（中等完整性级别）必备 -->
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="unvirtualizedResources" />
+    <!-- 读取系统通知（Windows.UI.Notifications.Management）所需 -->
+    <rescap:Capability Name="userNotificationListener" />
+  </Capabilities>
+
+  <Applications>
+    <Application Id="EdgePanel" Executable="EdgePanel.exe" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="win32App">
+      <uap:VisualElements
+        DisplayName="耄耋侧边栏"
+        Description="耄耋侧边栏"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png" />
+      <Extensions>
+        <!-- 商店/MSIX 沙箱下 Run 注册表键被虚拟化重定向，开机自启必须走系统 StartupTask -->
+        <uap5:Extension Category="windows.startupTask">
+          <uap5:StartupTask TaskId="EdgePanelStartup" Enabled="false" DisplayName="耄耋侧边栏" />
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+</Package>

@@ -49,6 +49,12 @@
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png" />
+      <Extensions>
+        <!-- 商店/MSIX 沙箱下 Run 注册表键被虚拟化重定向，开机自启必须走系统 StartupTask -->
+        <uap5:Extension Category="windows.startupTask">
+          <uap5:StartupTask TaskId="EdgePanelStartup" Enabled="false" DisplayName="耄耋侧边栏" />
+        </uap5:Extension>
+      </Extensions>
     </Application>
   </Applications>
 </Package>
